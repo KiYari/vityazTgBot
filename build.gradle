@@ -27,6 +27,9 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	// https://mvnrepository.com/artifact/org.telegram/telegrambots
 	implementation 'org.telegram:telegrambots:6.5.0'
+	// https://mvnrepository.com/artifact/org.hibernate/hibernate-validator
+	implementation 'org.hibernate:hibernate-validator:8.0.0.Final'
+
 
 }
 
