@@ -44,7 +44,7 @@ public class VityazBot extends TelegramLongPollingBot {
     }
 
     private void startCommandReceived(Long chatId, String name) {
-        String answer = "Hello, " + name + "!";
+        String answer = "Hello, " + name + "! If you are Kirill Pipiskin, You are not welcome here!!!";
         auditService.logChanges("replied to user " + name + " text: " + answer);
 
         sendMessage(chatId, answer);

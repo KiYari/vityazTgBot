@@ -4,3 +4,4 @@ services:
     build: .
     ports:
       - "9000:9000"
+    container_name: jenkins_vityaz_bot
