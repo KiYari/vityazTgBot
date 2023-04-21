@@ -38,7 +38,7 @@ public class VityazBot extends TelegramLongPollingBot {
                     startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
                     break;
                 default:
-                    sendMessage(chatId, "For now the only command is /start");
+                    sendMessage(chatId, "For now the only command is /start. Please, consider using it.");
             }
         }
     }
