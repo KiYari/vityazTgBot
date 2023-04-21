@@ -8,6 +8,7 @@ group = 'ru.vityaz'
 version = '1.0'
 sourceCompatibility = '17'
 
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
