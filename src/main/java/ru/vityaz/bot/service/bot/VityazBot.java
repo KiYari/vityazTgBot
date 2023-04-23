@@ -1,14 +1,16 @@
-package ru.vityaz.bot.service;
+package ru.vityaz.bot.service.bot;
 
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.vityaz.bot.config.BotConfig;
+import ru.vityaz.bot.service.AuditService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +19,12 @@ import java.util.List;
 public class VityazBot extends TelegramLongPollingBot {
     private final BotConfig config;
     private final AuditService auditService;
+    private final BotMenuService botMenuService;
 
-    public VityazBot(BotConfig config, AuditService auditService) {
+    public VityazBot(BotConfig config, AuditService auditService, BotMenuService botMenuService) {
         this.config = config;
         this.auditService = auditService;
+        this.botMenuService = botMenuService;
         List<BotCommand> commandList = new ArrayList<>();
         commandList.add(new BotCommand("/start", "Invoke start command"));
         commandList.add(new BotCommand("/data", "get stored your stored"));
@@ -58,26 +62,18 @@ public class VityazBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         if(update.hasMessage() && update.getMessage().hasText()) {
-            String messageText = update.getMessage().getText();
-            Long chatId = update.getMessage().getChatId();
+            Message message = update.getMessage();
+            String messageText = message.getText();
+            Long chatId = message.getChatId();
+
             switch (messageText) {
-                case "/start":
-                    startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
-                    break;
-                case "/help":
-                    sendMessage(chatId, HELPTEXT);
-                    break;
-                default:
-                    sendMessage(chatId, "For now the only command is /start.");
+                case "/start" -> sendMessage(chatId, botMenuService.start(message));
+                case "/data" -> sendMessage(chatId, botMenuService.data(message));
+                case "/cleanData" -> sendMessage(chatId, botMenuService.cleanData(message));
+                case "/help" -> sendMessage(chatId, HELPTEXT);
+                default -> sendMessage(chatId, "For now the only command is /start.");
             }
         }
-    }
-
-    private void startCommandReceived(Long chatId, String name) {
-        String answer = "Hello, " + name + "!";
-        auditService.logChanges("replied to user " + name + " text: " + answer);
-
-        sendMessage(chatId, answer);
     }
 
     private void sendMessage(Long chatId, String textToSend) {

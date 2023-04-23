@@ -7,7 +7,7 @@ import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import ru.vityaz.bot.service.AuditService;
-import ru.vityaz.bot.service.VityazBot;
+import ru.vityaz.bot.service.bot.VityazBot;
 
 @Component
 public class BotInitializer {
