@@ -25,7 +25,6 @@ public class UserService {
         User userToSave = new User();
         if (isUserInDatabase(chatId)) {
             userToSave = userRepository.findById(message.getChatId()).orElseThrow();
-            auditService.logChanges("User with id: " + chatId + "is changed");
         } else {
             auditService.logChanges("A new user with id: " + chatId + "is saved");
         }

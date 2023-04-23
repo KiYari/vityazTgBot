@@ -16,7 +16,7 @@ public class BotMenuService {
     }
 
     public String start(Message message) {
-        var name = message.getChat();
+        var name = message.getChat().getFirstName();
         userService.save(message);
         String answer = "Hello, " + name + "! It's pleasure to meet you!";
         auditService.logChanges("replied to user " + name + " text: " + answer);
@@ -40,6 +40,7 @@ public class BotMenuService {
         if(userService.isUserInDatabase(chatId)) {
             auditService.logChanges("User " + chatId + "deleted stored data about himself:\n" + userService.getUserStoredData(chatId).toString());
             userService.delete(chatId);
+            return "Your data deleted successfully!";
         }
         auditService.logChanges("User + " + chatId + " tried to delete his data, but nothing stored");
         return "No data stored about you";

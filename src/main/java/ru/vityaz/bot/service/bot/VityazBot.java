@@ -14,6 +14,7 @@ import ru.vityaz.bot.service.AuditService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class VityazBot extends TelegramLongPollingBot {
@@ -66,10 +67,10 @@ public class VityazBot extends TelegramLongPollingBot {
             String messageText = message.getText();
             Long chatId = message.getChatId();
 
-            switch (messageText) {
+            switch (messageText.toLowerCase()) {
                 case "/start" -> sendMessage(chatId, botMenuService.start(message));
                 case "/data" -> sendMessage(chatId, botMenuService.data(message));
-                case "/cleanData" -> sendMessage(chatId, botMenuService.cleanData(message));
+                case "/cleandata" -> sendMessage(chatId, botMenuService.cleanData(message));
                 case "/help" -> sendMessage(chatId, HELPTEXT);
                 default -> sendMessage(chatId, "For now the only command is /start.");
             }
