@@ -25,9 +25,9 @@ public class User {
     @Override
     public String toString() {
         return "User id: " + chatId +
-                "\n First name: " + firstName +
-                "\n Last name: " + lastName +
-                "\n Username: " + username +
-                "\n Register date: " + startDate;
+                "\nFirst name: " + firstName +
+                "\nLast name: " + lastName +
+                "\nUsername: " + username +
+                "\nRegister date: " + startDate;
     }
 }
