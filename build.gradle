@@ -30,6 +30,9 @@ dependencies {
 	implementation 'org.telegram:telegrambots:6.5.0'
 	// https://mvnrepository.com/artifact/org.hibernate/hibernate-validator
 	implementation 'org.hibernate:hibernate-validator:8.0.0.Final'
+	// https://mvnrepository.com/artifact/com.vdurmont/emoji-java
+	implementation 'com.vdurmont:emoji-java:5.1.1'
+
 }
 
 tasks.named('test') {

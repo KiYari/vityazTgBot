@@ -1,5 +1,6 @@
 package ru.vityaz.bot.service.bot;
 
+import com.vdurmont.emoji.EmojiParser;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.vityaz.bot.service.AuditService;
@@ -18,7 +19,7 @@ public class BotMenuService {
     public String start(Message message) {
         var name = message.getChat().getFirstName();
         userService.save(message);
-        String answer = "Hello, " + name + "! It's pleasure to meet you!";
+        String answer = EmojiParser.parseToUnicode("Hello, " + name + "! It's pleasure to meet you! :blush:");
         auditService.logChanges("replied to user " + name + " text: " + answer);
         return answer;
     }
