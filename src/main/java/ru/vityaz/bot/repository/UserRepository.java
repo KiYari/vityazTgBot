@@ -19,6 +19,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u.isSubscribedToSend FROM User u where u.chatId = :chatId")
     public Boolean isSubscribedToSend(Long chatId);
     @Modifying
-    @Query("UPDATE User u SET u.isSubscribedToSend=false WHERE u.chatId=:chatId")
+    @Query("UPDATE User u SET u.isSubscribedToSend=(not u.isSubscribedToSend) WHERE u.chatId=:chatId")
     public void switchIsSubscribedToSend(Long chatId);
 }

@@ -81,7 +81,7 @@ public class VityazBot extends TelegramLongPollingBot {
                     case "/cleandata" -> sendMessage(chatId, "Are you sure?", botMenuService.cleanDataConfirmation(chatId));
                     case "/help" -> sendMessage(chatId, botMenuService.help(chatId));
                     case "/settings" -> sendMessage(chatId, "Available options below", botMenuService.settings(chatId));
-                    default -> sendMessage(chatId, "Unknown command, try using /help for command list");
+                    default -> sendDefaultMessage(chatId, "Unknown command, try using /help for command list");
                 }
             }
         } else if (update.hasCallbackQuery()) {
@@ -136,5 +136,10 @@ public class VityazBot extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             auditService.logChanges(e);
         }
+    }
+
+    private void sendDefaultMessage(Long chatId, String textToSend) {
+        auditService.logChanges("User " + chatId + " sent incorrect command.");
+        sendMessage(chatId, textToSend);
     }
 }
