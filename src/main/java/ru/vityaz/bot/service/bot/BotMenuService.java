@@ -14,10 +14,25 @@ import java.util.List;
 public class BotMenuService {
     private final UserService userService;
     private final AuditService auditService;
+    private final BotSettingsService botSettingsService;
+    static final String HELPTEXT = """
+            This bot is created in order to recognize thing in the picture.
+            
+            COMMANDS:
+            /start - start a conversation with bot.
+            /data - exposes stored data about user.
+            /cleandata - permanently deletes stored data about user.
+            /help - outputs help text
+            /settings - lets user configure bot
+            """;
+    static final String ADMINTEXT = """
+            /send - sends messages to all subscribed users
+            """;
 
-    public BotMenuService(UserService userService, AuditService auditService) {
+    public BotMenuService(UserService userService, AuditService auditService, BotSettingsService botSettingsService) {
         this.userService = userService;
         this.auditService = auditService;
+        this.botSettingsService = botSettingsService;
     }
 
     public String start(Message message) {
@@ -28,9 +43,15 @@ public class BotMenuService {
         return answer;
     }
 
-    public String data(Message message) {
-        var chatId = message.getChatId();
+    public String help(Long chatId) {
+        if (userService.isAdmin(chatId)) {
+            return HELPTEXT + ADMINTEXT;
+        } else {
+            return HELPTEXT;
+        }
+    }
 
+    public String data(Long chatId) {
         if (userService.isUserInDatabase(chatId)) {
             auditService.logChanges("User + " + chatId + " got his data");
             return userService.getUserStoredData(chatId).toString();
@@ -39,8 +60,7 @@ public class BotMenuService {
         return "No data stored about you";
     }
 
-    public InlineKeyboardMarkup cleanDataConfirmation(Message message) {
-        var chatId = message.getChatId();
+    public InlineKeyboardMarkup cleanDataConfirmation(Long chatId) {
         auditService.logChanges("User + " + chatId + " tried to delete his data");
         if(userService.isUserInDatabase(chatId)){
             InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
@@ -78,5 +98,35 @@ public class BotMenuService {
     public String cleanDataNo(Long chatId) {
         auditService.logChanges("User + " + chatId + " changed his mind about deleting his data");
         return "Alright, your data will be saved!";
+    }
+
+    public String send(Long chatId, String textToSend) {
+        if(userService.isSubscribedToSend(chatId)) {
+            String message = textToSend.substring(6);
+            auditService.logChanges("User + " + chatId + " send message: " + message + " to everyone");
+            return message;
+        } else {
+            return null;
+        }
+    }
+
+    public InlineKeyboardMarkup settings(Long chatId) {
+        auditService.logChanges("User + " + chatId + " tried to access settings");
+        if(userService.isUserInDatabase(chatId)){
+            InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+            List<List<InlineKeyboardButton>> rows = new ArrayList<>();
+            List<InlineKeyboardButton> row1 = new ArrayList<>();
+
+            var sendMeButton = botSettingsService.subscribedToSendSettingButton(chatId);
+
+            row1.add(sendMeButton);
+
+            rows.add(row1);
+
+            markup.setKeyboard(rows);
+
+            return markup;
+        }
+        return null;
     }
 }

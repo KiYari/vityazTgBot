@@ -14,6 +14,8 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.vityaz.bot.config.BotConfig;
 import ru.vityaz.bot.service.AuditService;
+import ru.vityaz.bot.service.UserService;
+import ru.vityaz.bot.util.exception.MarkupNullException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,11 +25,16 @@ public class VityazBot extends TelegramLongPollingBot {
     private final BotConfig config;
     private final AuditService auditService;
     private final BotMenuService botMenuService;
+    private final UserService userService;
+    private final BotSettingsService botSettingsService;
 
-    public VityazBot(BotConfig config, AuditService auditService, BotMenuService botMenuService) {
+    public VityazBot(BotConfig config, AuditService auditService, BotMenuService botMenuService, UserService userService, BotSettingsService botSettingsService) {
         this.config = config;
         this.auditService = auditService;
         this.botMenuService = botMenuService;
+        this.userService = userService;
+        this.botSettingsService = botSettingsService;
+
         List<BotCommand> commandList = new ArrayList<>();
         commandList.add(new BotCommand("/start", "Invoke start command"));
         commandList.add(new BotCommand("/data", "get stored your stored"));
@@ -41,16 +48,6 @@ public class VityazBot extends TelegramLongPollingBot {
         }
 
     }
-    static final String HELPTEXT = """
-            This bot is created in order to recognize thing in the picture.
-            
-            COMMANDS:
-            '/start' - start a conversation with bot.
-            '/data' - exposes stored data about user.
-            '/cleandata' - permanently deletes stored data about user.
-            '/help' - outputs help text
-            '/settings' - lets user configure bot
-            """;
 
     @Override
     public String getBotUsername() {
@@ -69,12 +66,23 @@ public class VityazBot extends TelegramLongPollingBot {
             String messageText = message.getText();
             Long chatId = message.getChatId();
 
-            switch (messageText.toLowerCase()) {
-                case "/start" -> sendMessage(chatId, botMenuService.start(message));
-                case "/data" -> sendMessage(chatId, botMenuService.data(message));
-                case "/cleandata" -> sendMessage(chatId, "Are you sure?", botMenuService.cleanDataConfirmation(message));
-                case "/help" -> sendMessage(chatId, HELPTEXT);
-                default -> sendMessage(chatId, "Unknown command, try using /help for command list");
+            if(messageText.startsWith("/send")) {
+                if (userService.isAdmin(chatId)) {
+                    userService.getAllUserIds().stream()
+                            .filter(userService::isSubscribedToSend)
+                            .forEach(id -> sendMessage(id, botMenuService.send(id, messageText)));
+                } else {
+                    sendMessage(chatId, "You are not allowed to this command.");
+                }
+            } else {
+                switch (messageText.toLowerCase()) {
+                    case "/start" -> sendMessage(chatId, botMenuService.start(message));
+                    case "/data" -> sendMessage(chatId, botMenuService.data(chatId));
+                    case "/cleandata" -> sendMessage(chatId, "Are you sure?", botMenuService.cleanDataConfirmation(chatId));
+                    case "/help" -> sendMessage(chatId, botMenuService.help(chatId));
+                    case "/settings" -> sendMessage(chatId, "Available options below", botMenuService.settings(chatId));
+                    default -> sendMessage(chatId, "Unknown command, try using /help for command list");
+                }
             }
         } else if (update.hasCallbackQuery()) {
             String callbackData = update.getCallbackQuery().getData();
@@ -84,6 +92,7 @@ public class VityazBot extends TelegramLongPollingBot {
             switch (callbackData.toUpperCase()) {
                 case "YES_BUTTON" -> editMessage(chatId, botMenuService.cleanDataYes(chatId), messageId);
                 case "NO_BUTTON" -> editMessage(chatId, botMenuService.cleanDataNo(chatId), messageId);
+                case "SENDME_BUTTON" -> editMessage(chatId, botSettingsService.changeSendMeSetting(chatId) , messageId);
                 default -> editMessage(chatId, "I'm sorry, try again later. Command went incorrect.", messageId);
             }
         }
@@ -105,6 +114,7 @@ public class VityazBot extends TelegramLongPollingBot {
         message.setChatId(chatId);
         if (markup == null) {
             message.setText("Something went wrote, please, try again and consider give us log file.");
+            auditService.logChanges(new MarkupNullException(), "InlineKeyboardMarkup == null when sending message" );
         } else {
             message.setText(EmojiParser.parseToUnicode(textToSend));
             message.setReplyMarkup(markup);

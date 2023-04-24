@@ -21,6 +21,8 @@ public class User {
     private String lastName;
     private String username;
     private Date startDate;
+    private Boolean isAdmin;
+    private Boolean isSubscribedToSend;
 
     @Override
     public String toString() {
