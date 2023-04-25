@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import ru.vityaz.bot.model.User;
+import ru.vityaz.bot.model.entity.User;
 
 import java.util.Set;
 

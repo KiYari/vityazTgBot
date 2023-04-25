@@ -3,7 +3,7 @@ package ru.vityaz.bot.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import ru.vityaz.bot.model.User;
+import ru.vityaz.bot.model.entity.User;
 import ru.vityaz.bot.repository.UserRepository;
 
 import java.util.Date;

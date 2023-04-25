@@ -1,6 +1,7 @@
-package ru.vityaz.bot.model;
+package ru.vityaz.bot.model.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
@@ -23,6 +24,8 @@ public class User {
     private Date startDate;
     private Boolean isAdmin;
     private Boolean isSubscribedToSend;
+    private Boolean isSubscribedToWeatherAutosend;
+    private String city;
 
     @Override
     public String toString() {
