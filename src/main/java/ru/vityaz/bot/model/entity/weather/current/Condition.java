@@ -14,12 +14,13 @@ import ru.vityaz.bot.model.entity.weather.current.Current;
 @Getter
 @Setter
 public class Condition {
+    @Id
+    private Long conditionId;
     private String text;
     private String icon;
     private Integer code;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "CURRENT_ID")
-    @Id
     private Current current;
 
     @Override

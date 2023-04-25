@@ -14,16 +14,16 @@ import ru.vityaz.bot.model.entity.weather.Weather;
 @Getter
 @Setter
 public class Current {
+    @Id
+    private Long currentId;
     private Double temp_c;
-
     private Double wind_mph;
     private Double wind_kph;
     private Double feelslike_c;
     @OneToOne(mappedBy = "current")
     private Condition condition;
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "WEATHER")
-    @Id
+    @JoinColumn(name = "WEATHER_ID")
     private Weather weather;
 
     @Override

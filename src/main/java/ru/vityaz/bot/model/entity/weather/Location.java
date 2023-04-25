@@ -14,6 +14,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Getter
 @Setter
 public class Location {
+    @Id
+    private Long locationId;
     private String name;
     private String region;
     private String country;
@@ -21,8 +23,7 @@ public class Location {
     @Column(name = "timestamp")
     private String localtime;
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "WEATHER")
-    @Id
+    @JoinColumn(name = "WEATHER_ID")
     private Weather weather;
 
     @Override
