@@ -79,7 +79,7 @@ public class VityazBot extends TelegramLongPollingBot {
                 case "YES_BUTTON" -> editMessage(chatId, botMenuService.cleanDataYes(chatId), messageId);
                 case "NO_BUTTON" -> editMessage(chatId, botMenuService.cleanDataNo(chatId), messageId);
                 case "SENDME_BUTTON" -> editMessage(chatId, botSettingsService.changeSendMeSetting(chatId) , messageId);
-                case "SENDMEWEATHER_BUTTON" -> editMessage(chatId, botSettingsService.changeWeatherAutosendSetting(chatId) , messageId);
+                case "AUTOSENDMEWEATHER_BUTTON" -> editMessage(chatId, botSettingsService.changeWeatherAutosendSetting(chatId) , messageId);
                 default -> editMessage(chatId, "I'm sorry, try again later. Command went incorrect.", messageId);
             }
         }

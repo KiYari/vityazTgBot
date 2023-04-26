@@ -20,7 +20,7 @@ public class BotSettingsService {
         if(userService.isSubscribedToSend(chatId)) {
             sendMeButton.setText("To unsubscribe from send click here");
         } else {
-            sendMeButton.setText("To subscribe from send click here");
+            sendMeButton.setText("To subscribe to send click here");
         }
         sendMeButton.setCallbackData("SENDME_BUTTON");
         return sendMeButton;
@@ -30,11 +30,11 @@ public class BotSettingsService {
         if (userService.isSubscribedToSend(chatId)) {
             auditService.logChanges("User +" + chatId + " unsubscribed from send command");
             userService.switchIsSubscribed(chatId);
-            return "You have successfully unsubscribed!";
+            return "You have successfully unsubscribed from general information sending!";
         } else {
             auditService.logChanges("User +" + chatId + " subscribed to send command");
             userService.switchIsSubscribed(chatId);
-            return "You have successfully subscribed!";
+            return "You have successfully subscribed to general information sending!";
         }
 
     }
@@ -44,21 +44,21 @@ public class BotSettingsService {
         if(userService.isSubscribedToWeatherAutosend(chatId)) {
             weatheerButton.setText("To unsubscribe from weather autosending click here");
         } else {
-            weatheerButton.setText("To subscribe from weather autosending click here");
+            weatheerButton.setText("To subscribe to weather autosending click here");
         }
-        weatheerButton.setCallbackData("SENDMEWEATHER_BUTTON");
+        weatheerButton.setCallbackData("AUTOSENDMEWEATHER_BUTTON");
         return weatheerButton;
     }
 
     public String changeWeatherAutosendSetting(Long chatId) {
-        if (userService.isSubscribedToSend(chatId)) {
+        if (userService.isSubscribedToWeatherAutosend(chatId)) {
             auditService.logChanges("User +" + chatId + " unsubscribed from weather autosending command");
             userService.switchIsSubscribedToWeatherAutosend(chatId);
-            return "You have successfully unsubscribed!";
+            return "You have successfully unsubscribed from weather auto sending!";
         } else {
             auditService.logChanges("User +" + chatId + " subscribed to weather autosending command");
             userService.switchIsSubscribedToWeatherAutosend(chatId);
-            return "You have successfully subscribed!";
+            return "You have successfully subscribed to weather auto sending!";
         }
 
     }

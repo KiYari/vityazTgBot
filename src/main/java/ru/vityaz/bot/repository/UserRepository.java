@@ -26,7 +26,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u.isSubscribedToWeatherAutosend FROM User u where u.chatId = :chatId")
     public Boolean isSubscribedToWeather(Long chatId);
     @Modifying
-    @Query("UPDATE User u SET u.isSubscribedToWeatherAutosend=(not u.isSubscribedToSend) WHERE u.chatId=:chatId")
+    @Query("UPDATE User u SET u.isSubscribedToWeatherAutosend=(not u.isSubscribedToWeatherAutosend) WHERE u.chatId=:chatId")
     public void switchIsSubscribedToWeatherAutosend(Long chatId);
 
     @Query("SELECT u.city FROM User u WHERE u.chatId=:chatId")
