@@ -4,10 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.vityaz.bot.model.entity.weather.Weather;
+import ru.vityaz.bot.model.entity.weather.WeatherEntity;
 import ru.vityaz.bot.repository.WeatherRepository;
 import ru.vityaz.bot.service.AuditService;
 import ru.vityaz.bot.service.external.weather.WeatherApiService;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @Service
@@ -23,26 +26,24 @@ public class WeatherService {
 
     private String getWeatherFromApi(String city) {
         Weather weather = weatherApiService.getWeather(city, weatherToken);
-        save(weather);
+        save(WeatherEntity.toEntity(weather));
         return weather.toString();
     }
 
-    public String getWeather(String city, Date date) {
-        System.out.println(weatherRepository.getLastWeatherForCity(city));
-        System.out.println(weatherRepository.getLastWeatherForCity(city) != null);
-        if (weatherRepository.getLastWeatherForCity(city) == null ||
-                date.getTime() - weatherRepository.getLastWeatherDateCheckForCity(city).getTime() < 2 * HOUR) {
-            System.out.println("IN API CALL");
+    public String getWeather(String city, LocalDateTime date, Long chatId) {
+        LocalDateTime lastWeatehrCheckForCity = weatherRepository.getLastWeatherDateCheckForCity(city);
+        if (lastWeatehrCheckForCity == null ||
+                ChronoUnit.HOURS.between(date, lastWeatehrCheckForCity) < 2) {
+            auditService.logChanges("Sent weather to user " + chatId);
             return getWeatherFromApi(city);
         } else {
-            System.out.println("IN BD CALL");
-            return weatherRepository.getLastWeatherForCity(city).toString();
+            return Weather.parseEntity(weatherRepository.getLastWeatherForCity(city)).toString();
         }
     }
 
-    private void save(Weather weather) {
-        weatherRepository.saveAndFlush(weather);
-        auditService.logChanges("weather: " + weather + "was added to db");
+    private void save(WeatherEntity weather) {
+        weatherRepository.save(weather);
+        auditService.logChanges("weather: " + weather.toString() + "was added to db");
     }
 
 }

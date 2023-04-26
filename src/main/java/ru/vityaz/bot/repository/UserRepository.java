@@ -16,9 +16,19 @@ public interface UserRepository extends JpaRepository<User, Long> {
     public Set<Long> getAllChatIdsOfUsers();
     @Query("SELECT u.isAdmin FROM User u where u.chatId = :chatId")
     public Boolean isAdmin(Long chatId);
+
     @Query("SELECT u.isSubscribedToSend FROM User u where u.chatId = :chatId")
     public Boolean isSubscribedToSend(Long chatId);
     @Modifying
     @Query("UPDATE User u SET u.isSubscribedToSend=(not u.isSubscribedToSend) WHERE u.chatId=:chatId")
     public void switchIsSubscribedToSend(Long chatId);
+
+    @Query("SELECT u.isSubscribedToWeatherAutosend FROM User u where u.chatId = :chatId")
+    public Boolean isSubscribedToWeather(Long chatId);
+    @Modifying
+    @Query("UPDATE User u SET u.isSubscribedToWeatherAutosend=(not u.isSubscribedToSend) WHERE u.chatId=:chatId")
+    public void switchIsSubscribedToWeatherAutosend(Long chatId);
+
+    @Query("SELECT u.city FROM User u WHERE u.chatId=:chatId")
+    public String findUserCityByChatId(Long chatId);
 }

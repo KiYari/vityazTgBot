@@ -2,13 +2,14 @@ package ru.vityaz.bot.model.entity.weather;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ru.vityaz.bot.model.entity.weather.current.Condition;
 import ru.vityaz.bot.model.entity.weather.current.Current;
 
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class Weather {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,5 +25,14 @@ public class Weather {
                 "\nTemperature(celsius): " + current.getTemp_c() +
                 "\nFeels like(celsius): " + current.getFeelslike_c() +
                 "\nWeather condition: " + current.getCondition().getText() + "(" + current.getCondition().getCode() + ")";
+    }
+
+    public static Weather parseEntity(WeatherEntity weather) {
+        return Weather.builder()
+                .location(new Location(weather.getCity(), weather.getRegion(), weather.getCountry(), weather.getLocaltime(), weather.getTimestamp(), null))
+                .current(new Current(weather.getTemp_c(), weather.getWind_mph(), weather.getWind_kph(), weather.getFeelslike_c(),
+                        new Condition(weather.getCondition(), weather.getConditionIcon(), weather.getConditionCode(), null),
+                        null))
+                .build();
     }
 }

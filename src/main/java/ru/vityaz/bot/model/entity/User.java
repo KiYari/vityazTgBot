@@ -33,6 +33,8 @@ public class User {
                 "\nFirst name: " + firstName +
                 "\nLast name: " + lastName +
                 "\nUsername: " + username +
-                "\nRegister date: " + startDate;
+                "\nRegister date: " + startDate +
+                "\nCurrent city: " + city +
+                "\nSubscribed to weather: " + isSubscribedToWeatherAutosend;
     }
 }

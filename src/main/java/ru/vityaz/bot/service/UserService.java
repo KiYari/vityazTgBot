@@ -20,6 +20,10 @@ public class UserService {
         this.auditService = auditService;
     }
 
+    public User getById(Long chatId) {
+        return userRepository.findById(chatId).orElseThrow();
+    }
+
     public void save(Message message) {
         var chatId = message.getChatId();
         var chat = message.getChat();
@@ -32,6 +36,7 @@ public class UserService {
             userToSave.setStartDate(new Date());
             userToSave.setIsAdmin(false);
             userToSave.setIsSubscribedToSend(true);
+            userToSave.setIsSubscribedToWeatherAutosend(false);
         }
         userToSave.setChatId(chatId);
         userToSave.setUsername(chat.getUserName());
@@ -39,6 +44,16 @@ public class UserService {
         userToSave.setLastName(chat.getLastName());
 
         userRepository.save(userToSave);
+    }
+
+    public void save(User user) {
+        userRepository.save(user);
+        if (userRepository.existsById(user.getChatId())) {
+            auditService.logChanges("User " + user.getChatId() + "changed");
+        } else {
+            auditService.logChanges("User " + user + "was created!");
+        }
+
     }
 
     public void delete(Long chatId) {
@@ -67,5 +82,17 @@ public class UserService {
 
     public void switchIsSubscribed(Long chatId) {
         userRepository.switchIsSubscribedToSend(chatId);
+    }
+
+    public Boolean isSubscribedToWeatherAutosend(Long chatId) {
+        return userRepository.isSubscribedToWeather(chatId);
+    }
+
+    public void switchIsSubscribedToWeatherAutosend(Long chatId) {
+        userRepository.switchIsSubscribedToWeatherAutosend(chatId);
+    }
+
+    public String getUserCity(Long chatId) {
+        return userRepository.findUserCityByChatId(chatId);
     }
 }

@@ -38,4 +38,28 @@ public class BotSettingsService {
         }
 
     }
+
+    public InlineKeyboardButton subscribedToWeatherAutosendSettingButton(Long chatId) {
+        var weatheerButton = new InlineKeyboardButton();
+        if(userService.isSubscribedToWeatherAutosend(chatId)) {
+            weatheerButton.setText("To unsubscribe from weather autosending click here");
+        } else {
+            weatheerButton.setText("To subscribe from weather autosending click here");
+        }
+        weatheerButton.setCallbackData("SENDMEWEATHER_BUTTON");
+        return weatheerButton;
+    }
+
+    public String changeWeatherAutosendSetting(Long chatId) {
+        if (userService.isSubscribedToSend(chatId)) {
+            auditService.logChanges("User +" + chatId + " unsubscribed from weather autosending command");
+            userService.switchIsSubscribedToWeatherAutosend(chatId);
+            return "You have successfully unsubscribed!";
+        } else {
+            auditService.logChanges("User +" + chatId + " subscribed to weather autosending command");
+            userService.switchIsSubscribedToWeatherAutosend(chatId);
+            return "You have successfully subscribed!";
+        }
+
+    }
 }

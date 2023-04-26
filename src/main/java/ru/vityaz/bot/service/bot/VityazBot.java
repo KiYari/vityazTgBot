@@ -2,6 +2,7 @@ package ru.vityaz.bot.service.bot;
 
 import com.vdurmont.emoji.EmojiParser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -13,10 +14,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.vityaz.bot.config.BotConfig;
 import ru.vityaz.bot.service.AuditService;
 import ru.vityaz.bot.service.UserService;
-import ru.vityaz.bot.service.external.weather.WeatherService;
 import ru.vityaz.bot.util.exception.MarkupNullException;
-
-import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +24,6 @@ public class VityazBot extends TelegramLongPollingBot {
     private final BotMenuService botMenuService;
     private final UserService userService;
     private final BotSettingsService botSettingsService;
-    private final WeatherService weatherService;
 
     @Override
     public String getBotUsername() {
@@ -45,7 +42,7 @@ public class VityazBot extends TelegramLongPollingBot {
             String messageText = message.getText();
             Long chatId = message.getChatId();
 
-            if(messageText.startsWith("/send")) {
+            if(messageText.toLowerCase().startsWith("/send")) {
                 if (userService.isAdmin(chatId)) {
                     userService.getAllUserIds().stream()
                             .filter(userService::isSubscribedToSend)
@@ -53,6 +50,14 @@ public class VityazBot extends TelegramLongPollingBot {
                 } else {
                     sendMessage(chatId, "You are not allowed to this command.");
                 }
+
+            } else if(messageText.toLowerCase().startsWith("/setcity")) {
+                if (messageText.replaceAll(" ", "").equals("/setcity")) {
+                    sendMessage(chatId, "You didn't enter city. Write your city e.g. /city Vladivostok");
+                } else {
+                    sendMessage(chatId, botMenuService.setCity(chatId, messageText.substring(9)));
+                }
+
             } else {
                 switch (messageText.toLowerCase()) {
                     case "/start" -> sendMessage(chatId, botMenuService.start(message));
@@ -60,10 +65,11 @@ public class VityazBot extends TelegramLongPollingBot {
                     case "/cleandata" -> sendMessage(chatId, "Are you sure?", botMenuService.cleanDataConfirmation(chatId));
                     case "/help" -> sendMessage(chatId, botMenuService.help(chatId));
                     case "/settings" -> sendMessage(chatId, "Available options below", botMenuService.settings(chatId));
-                    case "/showmeweather" -> sendMessage(chatId, weatherService.getWeather("Vladivostok", new Date()));
+                    case "/showmeweather" -> sendMessage(chatId, botMenuService.showMeWeather(chatId));
                     default -> sendDefaultMessage(chatId, "Unknown command, try using /help for command list", messageText);
                 }
             }
+
         } else if (update.hasCallbackQuery()) {
             String callbackData = update.getCallbackQuery().getData();
             Integer messageId = update.getCallbackQuery().getMessage().getMessageId();
@@ -73,6 +79,7 @@ public class VityazBot extends TelegramLongPollingBot {
                 case "YES_BUTTON" -> editMessage(chatId, botMenuService.cleanDataYes(chatId), messageId);
                 case "NO_BUTTON" -> editMessage(chatId, botMenuService.cleanDataNo(chatId), messageId);
                 case "SENDME_BUTTON" -> editMessage(chatId, botSettingsService.changeSendMeSetting(chatId) , messageId);
+                case "SENDMEWEATHER_BUTTON" -> editMessage(chatId, botSettingsService.changeWeatherAutosendSetting(chatId) , messageId);
                 default -> editMessage(chatId, "I'm sorry, try again later. Command went incorrect.", messageId);
             }
         }
@@ -121,5 +128,13 @@ public class VityazBot extends TelegramLongPollingBot {
     private void sendDefaultMessage(Long chatId, String textToSend, String messageText) {
         auditService.logChanges("User " + chatId + " tried to use unknown command. He typed: " + messageText);
         sendMessage(chatId, textToSend);
+    }
+
+    @Scheduled(cron = "0 0 8 * * *")
+    private void sendWeather() {
+        userService.getAllUserIds()
+                .stream()
+                .filter(userService::isSubscribedToWeatherAutosend)
+                .forEach(id -> sendMessage(id, botMenuService.showMeWeather(id)));
     }
 }

@@ -7,15 +7,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.vityaz.bot.model.entity.weather.Weather;
 
-@Entity
-@Table(name = "WEATHER_CURRENT")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 public class Current {
-    @Id
-    private Long currentId;
     private Double temp_c;
     private Double wind_mph;
     private Double wind_kph;
