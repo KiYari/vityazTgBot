@@ -21,19 +21,17 @@ public class BotMenuService {
     private final AuditService auditService;
     private final BotSettingsService botSettingsService;
     static final String HELPTEXT = """
-            This bot is created in order to recognize thing in the picture.
-            
             COMMANDS:
-            /start - start a conversation with bot.
-            /data - exposes stored data about user.
-            /cleanData - permanently deletes stored data about user.
-            /help - outputs help text
-            /settings - lets user configure bot
-            /setCity - sets your city. Write your city after space e.g. /setCity Inta
-            /showMeWeather - shows weather in your city
+            /start - Начало работы бота.
+            /data - Получение собранной информации.
+            /cleanData - Удаляет данные из базы данных навсегда.
+            /help - Показывает возможные команды бота
+            /settings - Показывает панель настроек бота
+            /setCity - Меняем ваш город. Используйте: /setCity Иркутск
+            /showMeWeather - Показывает погоду в вашем городе
             """;
     static final String ADMINTEXT = """
-            /send - sends messages to all subscribed users
+            /send - Отправляет сообщение всем возможным пользователям
             """;
     private final WeatherService weatherService;
 

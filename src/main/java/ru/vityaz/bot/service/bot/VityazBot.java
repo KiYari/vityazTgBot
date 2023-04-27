@@ -48,12 +48,12 @@ public class VityazBot extends TelegramLongPollingBot {
                             .filter(userService::isSubscribedToSend)
                             .forEach(id -> sendMessage(id, botMenuService.send(id, messageText)));
                 } else {
-                    sendMessage(chatId, "You are not allowed to this command.");
+                    sendMessage(chatId, "Вам нельзя использовать данную программу.");
                 }
 
             } else if(messageText.toLowerCase().startsWith("/setcity")) {
                 if (messageText.replaceAll(" ", "").equals("/setcity")) {
-                    sendMessage(chatId, "You didn't enter city. Write your city e.g. /city Vladivostok");
+                    sendMessage(chatId, "Вы не ввели город. Используйте: /city Владивосток");
                 } else {
                     sendMessage(chatId, botMenuService.setCity(chatId, messageText.substring(9)));
                 }
@@ -62,11 +62,11 @@ public class VityazBot extends TelegramLongPollingBot {
                 switch (messageText.toLowerCase()) {
                     case "/start" -> sendMessage(chatId, botMenuService.start(message));
                     case "/data" -> sendMessage(chatId, botMenuService.data(chatId));
-                    case "/cleandata" -> sendMessage(chatId, "Are you sure?", botMenuService.cleanDataConfirmation(chatId));
+                    case "/cleandata" -> sendMessage(chatId, "Вы уверены?", botMenuService.cleanDataConfirmation(chatId));
                     case "/help" -> sendMessage(chatId, botMenuService.help(chatId));
-                    case "/settings" -> sendMessage(chatId, "Available options below", botMenuService.settings(chatId));
+                    case "/settings" -> sendMessage(chatId, "Доступные опции", botMenuService.settings(chatId));
                     case "/showmeweather" -> sendMessage(chatId, botMenuService.showMeWeather(chatId));
-                    default -> sendDefaultMessage(chatId, "Unknown command, try using /help for command list", messageText);
+                    default -> sendDefaultMessage(chatId, "Неизвестная команда, используйте /help для просмотра возможных комманд", messageText);
                 }
             }
 
@@ -100,7 +100,7 @@ public class VityazBot extends TelegramLongPollingBot {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         if (markup == null) {
-            message.setText("Something went wrote, please, try again and consider give us log file.");
+            message.setText("Что-то пошло не так. Отошлите лог фалйы.");
             auditService.logChanges(new MarkupNullException(), "InlineKeyboardMarkup == null when sending message" );
         } else {
             message.setText(EmojiParser.parseToUnicode(textToSend));

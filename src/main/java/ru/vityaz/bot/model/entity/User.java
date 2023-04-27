@@ -30,11 +30,11 @@ public class User {
     @Override
     public String toString() {
         return "User id: " + chatId +
-                "\nFirst name: " + firstName +
-                "\nLast name: " + lastName +
-                "\nUsername: " + username +
-                "\nRegister date: " + startDate +
-                "\nCurrent city: " + city +
-                "\nSubscribed to weather: " + isSubscribedToWeatherAutosend;
+                "\nИмя: " + firstName +
+                "\nФамилия: " + lastName +
+                "\nНик: " + username +
+                "\nДата регистрации: " + startDate +
+                "\nГород: " + city +
+                "\nПодписка на погоду: " + isSubscribedToWeatherAutosend;
     }
 }

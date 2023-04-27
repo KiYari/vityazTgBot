@@ -11,9 +11,9 @@ import java.util.Date;
 @Repository
 public interface WeatherRepository extends JpaRepository<WeatherEntity, Long> {
 
-    @Query("select w.timestamp from WeatherEntity w where w.city=:city")
+    @Query(value = "select timestamp from WEATHER where city=':city' limit 1", nativeQuery = true)
     public LocalDateTime getLastWeatherDateCheckForCity(String city);
 
-    @Query("select w from WeatherEntity w")
+    @Query(value = "select * from WEATHER where city=':city' limit 1", nativeQuery = true)
     public WeatherEntity getLastWeatherForCity(String city);
 }

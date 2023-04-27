@@ -21,10 +21,10 @@ public class Weather {
 
     @Override
     public String toString() {
-        return "Weather in city " + location.getName() + ", " + location.getRegion() + ", " + location.getCountry() +
-                "\nTemperature(celsius): " + current.getTemp_c() +
-                "\nFeels like(celsius): " + current.getFeelslike_c() +
-                "\nWeather condition: " + current.getCondition().getText() + "(" + current.getCondition().getCode() + ")";
+        return "Погода в городе: " + location.getName() + ", " + location.getRegion() + ", " + location.getCountry() +
+                "\nТемпература(Цельсии): " + current.getTemp_c() +
+                "\nЧувствуется(цель): " + current.getFeelslike_c() +
+                "\nПогодные условия: " + current.getCondition().getText() + "(" + current.getCondition().getCode() + ")";
     }
 
     public static Weather parseEntity(WeatherEntity weather) {
